@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --acc: #6366f1;
+  --accd: #4f46e5;
+  --accbg: #eef2ff;
+  --accbrd: #c7d2fe;
+  --green: #16a34a;
+  --greenbg: #f0fdf4;
+  --greenbrd: #bbf7d0;
+  --red: #dc2626;
+  --redbg: #fef2f2;
+  --redbrd: #fecaca;
+  --hl: #ede9fe;
+  --hltext: #6d28d9;
+  --shadow: 0 16px 48px rgba(15, 23, 42, 0.14);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg: #0b1120;
+  --panel: #151e31;
+  --border: #2c3a52;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --acc: #818cf8;
+  --accd: #a5b4fc;
+  --accbg: #28304f;
+  --accbrd: #3f4a77;
+  --green: #4ade80;
+  --greenbg: #0c2919;
+  --greenbrd: #1d4a2e;
+  --red: #f87171;
+  --redbg: #3a1414;
+  --redbrd: #5c2020;
+  --hl: #2d2a55;
+  --hltext: #c4b5fd;
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Layered so Tailwind utility classes (e.g. text-white) can override. */
+@layer base {
+  a {
+    color: var(--acc);
+  }
+  a:hover {
+    color: var(--accd);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
 }
