@@ -63,6 +63,14 @@ Hard repeats, Good +1, Easy +2). Grades update `srs_stage` / `next_review_at`
 per user (RLS). “Export to Anki (.csv)” downloads front/back cards (HTML
 formatting — enable “Allow HTML in fields” when importing).
 
+## Deployment
+
+- Repo: https://github.com/Izumx/AI_NEWSSYNC
+- Production: https://ai-newssync.vercel.app (Vercel project `izumxs-projects/ai-newssync`, auto-deploys on push to `main`)
+- Env vars live in Vercel (Project Settings → Environment Variables), mirrored from `.env.local`.
+- RSS extraction uses `linkedom` (not `jsdom`) — `jsdom`'s `html-encoding-sniffer` dependency fails with `ERR_REQUIRE_ESM` on Vercel's Node runtime.
+- `vercel.json` cron needs a **Pro** plan to actually fire on a daily schedule; on the Hobby plan, trigger `/api/cron/fetch-news` manually or from an external scheduler (e.g. GitHub Actions, cron-job.org) with the `CRON_SECRET` bearer token.
+
 ## RSS pipeline
 
 `GET /api/cron/fetch-news` (auth: `Authorization: Bearer $CRON_SECRET`) pulls BBC
