@@ -114,97 +114,118 @@ export function TutorSidebar({ article }: { article: Article }) {
     ask(text);
   };
 
+  const content = (
+    <>
+      <div className="flex flex-none items-center gap-[9px] border-b border-[var(--border)] px-4 py-3.5">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] text-white">
+          <Sparkles size={14} />
+        </div>
+        <div>
+          <div className="text-[13.5px] font-bold">AI Tutor</div>
+          <div className="flex items-center gap-1 text-[11px] text-[var(--green)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--green)]" />
+            Online · IELTS Academic mode
+          </div>
+        </div>
+        <div className="flex-1" />
+        <button
+          onClick={toggleTutor}
+          className="flex cursor-pointer rounded-md border-none bg-transparent p-1.5 text-[var(--text3)] hover:bg-[var(--bg)] hover:text-[var(--text)]"
+        >
+          <X size={15} />
+        </button>
+      </div>
+      <div ref={msgsRef} className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              className={
+                m.role === "user"
+                  ? "max-w-[85%] whitespace-pre-wrap rounded-xl rounded-br-[4px] bg-[var(--acc)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-white"
+                  : "max-w-[90%] whitespace-pre-wrap rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-[var(--text)]"
+              }
+            >
+              {m.role === "assistant" ? clean(m.text) : m.text}
+            </div>
+          </div>
+        ))}
+        {busy && streamText && (
+          <div className="flex justify-start">
+            <div className="max-w-[90%] whitespace-pre-wrap rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-[var(--text)]">
+              {clean(streamText)}
+            </div>
+          </div>
+        )}
+        {busy && !streamText && (
+          <div className="flex gap-1 self-start rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-3.5 py-2.5">
+            <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)]" />
+            <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)] [animation-delay:.2s]" />
+            <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)] [animation-delay:.4s]" />
+          </div>
+        )}
+      </div>
+      <div className="flex-none border-t border-[var(--border)] px-4 py-3">
+        <div className="mb-2.5 flex flex-wrap gap-1.5">
+          {CHIPS.map((c) => (
+            <button
+              key={c.label}
+              disabled={busy}
+              onClick={() => ask(c.prompt)}
+              className="cursor-pointer rounded-full border border-[var(--accbrd)] bg-[var(--accbg)] px-[11px] py-[5px] text-[11.5px] font-semibold text-[var(--hltext)] transition-all hover:brightness-95 disabled:cursor-default disabled:opacity-50"
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input
+            ref={inputRef}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") sendChat();
+            }}
+            placeholder="Ask about grammar, vocabulary, ideas…"
+            className="h-[38px] min-w-0 flex-1 rounded-[9px] border border-[var(--border)] bg-[var(--bg)] px-3 text-[13px] text-[var(--text)] outline-none transition-colors focus:border-[var(--acc)]"
+          />
+          <button
+            onClick={sendChat}
+            disabled={busy}
+            title="Send"
+            className="flex h-[38px] w-[38px] flex-none cursor-pointer items-center justify-center rounded-[9px] border-none bg-[var(--acc)] text-white transition-all hover:brightness-110 disabled:cursor-default disabled:opacity-50"
+          >
+            <Send size={15} />
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <AnimatePresence>
       {tutorOpen && (
-        <motion.aside
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 40 }}
-          transition={{ duration: 0.2 }}
-          className="flex w-[350px] flex-none flex-col border-l border-[var(--border)] bg-[var(--panel)]"
-        >
-          <div className="flex flex-none items-center gap-[9px] border-b border-[var(--border)] px-4 py-3.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] text-white">
-              <Sparkles size={14} />
-            </div>
-            <div>
-              <div className="text-[13.5px] font-bold">AI Tutor</div>
-              <div className="flex items-center gap-1 text-[11px] text-[var(--green)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--green)]" />
-                Online · IELTS Academic mode
-              </div>
-            </div>
-            <div className="flex-1" />
-            <button
-              onClick={toggleTutor}
-              className="flex cursor-pointer rounded-md border-none bg-transparent p-1.5 text-[var(--text3)] hover:bg-[var(--bg)] hover:text-[var(--text)]"
-            >
-              <X size={15} />
-            </button>
-          </div>
-          <div ref={msgsRef} className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={
-                    m.role === "user"
-                      ? "max-w-[85%] whitespace-pre-wrap rounded-xl rounded-br-[4px] bg-[var(--acc)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-white"
-                      : "max-w-[90%] whitespace-pre-wrap rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-[var(--text)]"
-                  }
-                >
-                  {m.role === "assistant" ? clean(m.text) : m.text}
-                </div>
-              </div>
-            ))}
-            {busy && streamText && (
-              <div className="flex justify-start">
-                <div className="max-w-[90%] whitespace-pre-wrap rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-[13px] py-[9px] text-[13px] leading-[1.55] text-[var(--text)]">
-                  {clean(streamText)}
-                </div>
-              </div>
-            )}
-            {busy && !streamText && (
-              <div className="flex gap-1 self-start rounded-xl rounded-bl-[4px] border border-[var(--border)] bg-[var(--bg)] px-3.5 py-2.5">
-                <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)]" />
-                <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)] [animation-delay:.2s]" />
-                <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--text3)] [animation-delay:.4s]" />
-              </div>
-            )}
-          </div>
-          <div className="flex-none border-t border-[var(--border)] px-4 py-3">
-            <div className="mb-2.5 flex flex-wrap gap-1.5">
-              {CHIPS.map((c) => (
-                <button
-                  key={c.label}
-                  disabled={busy}
-                  onClick={() => ask(c.prompt)}
-                  className="cursor-pointer rounded-full border border-[var(--accbrd)] bg-[var(--accbg)] px-[11px] py-[5px] text-[11.5px] font-semibold text-[var(--hltext)] transition-all hover:brightness-95 disabled:cursor-default disabled:opacity-50"
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                ref={inputRef}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") sendChat();
-                }}
-                placeholder="Ask about grammar, vocabulary, ideas…"
-                className="h-[38px] min-w-0 flex-1 rounded-[9px] border border-[var(--border)] bg-[var(--bg)] px-3 text-[13px] text-[var(--text)] outline-none transition-colors focus:border-[var(--acc)]"
-              />
-              <button
-                onClick={sendChat}
-                disabled={busy}
-                title="Send"
-                className="flex h-[38px] w-[38px] flex-none cursor-pointer items-center justify-center rounded-[9px] border-none bg-[var(--acc)] text-white transition-all hover:brightness-110 disabled:cursor-default disabled:opacity-50"
-              >
-                <Send size={15} />
-              </button>
-            </div>
-          </div>
-        </motion.aside>
+        <>
+          {/* Mobile: full-screen sheet */}
+          <motion.div
+            key="tutor-mobile"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.25, ease: [0.2, 0.9, 0.3, 1] }}
+            className="fixed inset-0 z-[60] flex flex-col bg-[var(--panel)] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:hidden"
+          >
+            {content}
+          </motion.div>
+          {/* Desktop: side panel */}
+          <motion.aside
+            key="tutor-desktop"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.2 }}
+            className="hidden w-[350px] flex-none flex-col border-l border-[var(--border)] bg-[var(--panel)] md:flex"
+          >
+            {content}
+          </motion.aside>
+        </>
       )}
     </AnimatePresence>
   );

@@ -5,10 +5,14 @@ import { useReaderStore } from "@/store/readerStore";
 import { useSavedWords } from "@/hooks/useSavedWords";
 import { stopSpeaking } from "@/lib/tts";
 import { Header } from "./Header";
+import { MobileHeader } from "./MobileHeader";
 import { SplitView } from "./SplitView";
+import { MobileArticle } from "./MobileArticle";
+import { BottomTabBar } from "./BottomTabBar";
 import { WordInspector } from "./WordInspector";
 import { TutorSidebar } from "./TutorSidebar";
 import { QuizModal } from "./QuizModal";
+import { SavedWordsSheet } from "./SavedWordsSheet";
 import type { Article, VocabEntry } from "@/lib/types";
 
 export function Reader({ article }: { article: Article }) {
@@ -31,13 +35,17 @@ export function Reader({ article }: { article: Article }) {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
+      <MobileHeader article={article} />
       <Header article={article} />
       <div className="flex min-h-0 flex-1">
         <SplitView article={article} />
+        <MobileArticle article={article} />
         <TutorSidebar article={article} />
       </div>
+      <BottomTabBar article={article} saved={saved} />
       <WordInspector vocab={vocab} saved={saved} onToggleSave={toggle} />
       <QuizModal article={article} />
+      <SavedWordsSheet article={article} saved={saved} />
     </div>
   );
 }

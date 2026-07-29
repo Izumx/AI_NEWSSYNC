@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import { useReaderStore } from "@/store/readerStore";
 import { AuthControls } from "./AuthControls";
-import { plainText } from "@/lib/parse";
-import { speak, stopSpeaking } from "@/lib/tts";
+import { useArticleTts } from "@/hooks/useArticleTts";
 import type { Article } from "@/lib/types";
 
 function toggleButtonClasses(active: boolean) {
@@ -25,17 +24,9 @@ function toggleButtonClasses(active: boolean) {
 }
 
 export function Header({ article }: { article: Article }) {
-  const {
-    dark,
-    sync,
-    ttsPlaying,
-    tutorOpen,
-    toggleDark,
-    toggleSync,
-    setTtsPlaying,
-    toggleTutor,
-    setQuizOpen,
-  } = useReaderStore();
+  const { dark, sync, tutorOpen, toggleDark, toggleSync, toggleTutor, setQuizOpen } =
+    useReaderStore();
+  const { playing: ttsPlaying, toggle: handleTts } = useArticleTts(article);
 
   const date = article.published_at
     ? new Date(article.published_at).toLocaleDateString("en-US", {
@@ -45,19 +36,8 @@ export function Header({ article }: { article: Article }) {
       })
     : null;
 
-  const handleTts = () => {
-    if (ttsPlaying) {
-      stopSpeaking();
-      setTtsPlaying(false);
-    } else {
-      const text = article.paragraphs_en.map(plainText).join(" ");
-      speak(text, () => setTtsPlaying(false));
-      setTtsPlaying(true);
-    }
-  };
-
   return (
-    <header className="flex min-h-[60px] flex-none flex-wrap items-center gap-x-4 gap-y-2.5 border-b border-[var(--border)] bg-[var(--panel)] px-5 py-2.5 transition-colors">
+    <header className="hidden min-h-[60px] flex-none flex-wrap items-center gap-x-4 gap-y-2.5 border-b border-[var(--border)] bg-[var(--panel)] px-5 py-2.5 transition-colors md:flex">
       <Link
         href="/"
         title="All articles"

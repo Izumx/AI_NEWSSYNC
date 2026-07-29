@@ -4,40 +4,10 @@ import { useMemo, useRef } from "react";
 import { useReaderStore } from "@/store/readerStore";
 import { useSyncScroll } from "@/hooks/useSyncScroll";
 import { parseSegments } from "@/lib/parse";
+import { WordSpan } from "./WordSpan";
 import type { Article, Segment } from "@/lib/types";
 
 const PARA_LABELS = "ABCDEFGHIJ";
-
-function WordSpan({
-  segment,
-  variant,
-}: {
-  segment: Extract<Segment, { kind: "word" }>;
-  variant: "en" | "ru";
-}) {
-  const { inspectorKey, setInspectorKey } = useReaderStore();
-  const active = inspectorKey === segment.key;
-
-  const base = "cursor-pointer rounded px-[3px] transition-all";
-  let cls: string;
-  if (active) {
-    cls = `${base} bg-[var(--acc)] text-white ${variant === "ru" ? "font-semibold" : ""}`;
-  } else if (variant === "en") {
-    cls = `${base} bg-[var(--hl)] font-medium text-[var(--hltext)] hover:brightness-95`;
-  } else {
-    cls = `${base} border-b-[1.5px] border-dotted border-[var(--accbrd)] text-[var(--text)]`;
-  }
-
-  return (
-    <span
-      title="Click to inspect this word"
-      className={cls}
-      onClick={() => setInspectorKey(active ? null : segment.key)}
-    >
-      {segment.text}
-    </span>
-  );
-}
 
 function Paragraph({
   label,
@@ -93,7 +63,7 @@ export function SplitView({ article }: { article: Article }) {
   const awlCount = article.academic_vocabulary.length;
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1">
+    <div className="hidden min-h-0 min-w-0 flex-1 md:flex">
       {/* LEFT: English article */}
       <div className="flex min-w-0 flex-1 flex-col border-r border-[var(--border)]">
         <div className="flex h-[46px] flex-none items-center gap-2.5 border-b border-[var(--border)] bg-[var(--panel)] px-7 py-2.5 transition-colors">

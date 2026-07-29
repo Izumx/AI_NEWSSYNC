@@ -51,7 +51,7 @@ export function QuizModal({ article }: { article: Article }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
           onClick={() => setQuizOpen(false)}
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(15,23,42,.55)] p-6 backdrop-blur-[3px]"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(15,23,42,.55)] p-0 md:p-6 md:backdrop-blur-[3px]"
         >
           <motion.div
             initial={{ y: 28, opacity: 0 }}
@@ -59,9 +59,9 @@ export function QuizModal({ article }: { article: Article }) {
             exit={{ y: 28, opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.2, 0.9, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[calc(100vh-60px)] w-[min(680px,100%)] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--panel)] [box-shadow:var(--shadow)]"
+            className="flex h-full max-h-full w-full flex-col overflow-hidden border-[var(--border)] bg-[var(--panel)] md:h-auto md:max-h-[calc(100vh-60px)] md:w-[min(680px,100%)] md:rounded-2xl md:border md:[box-shadow:var(--shadow)]"
           >
-            <div className="flex flex-none items-center gap-2.5 border-b border-[var(--border)] px-6 py-[18px]">
+            <div className="flex flex-none items-center gap-2.5 border-b border-[var(--border)] px-6 pb-[18px] pt-[max(18px,env(safe-area-inset-top))] md:pt-[18px]">
               <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[var(--accbg)] text-[var(--acc)]">
                 <ClipboardCheck size={16} />
               </div>
@@ -157,7 +157,7 @@ export function QuizModal({ article }: { article: Article }) {
                 );
               })}
             </div>
-            <div className="flex flex-none items-center gap-2.5 border-t border-[var(--border)] bg-[var(--bg)] px-6 py-3.5">
+            <div className="flex flex-none items-center gap-2.5 border-t border-[var(--border)] bg-[var(--bg)] px-6 pb-[max(14px,env(safe-area-inset-bottom))] pt-3.5 md:pb-3.5">
               <span className="text-xs text-[var(--text3)]">
                 {checked
                   ? "Review the explanations above, then try again."
