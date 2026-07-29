@@ -30,12 +30,13 @@ function formatDate(iso: string | null): string | null {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string }>;
+  searchParams: Promise<{ code?: string; error?: string }>;
 }) {
   // If Supabase falls back to the Site URL after email verification, the
-  // auth code lands here — forward it to the callback route.
-  const { code } = await searchParams;
+  // auth code (or an error, e.g. an expired link) lands here — forward it.
+  const { code, error } = await searchParams;
   if (code) redirect(`/auth/callback?code=${encodeURIComponent(code)}`);
+  if (error) redirect("/login?error=link");
 
   const supabase = await createClient();
   const { data } = await supabase
