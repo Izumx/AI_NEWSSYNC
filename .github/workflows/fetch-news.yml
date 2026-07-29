@@ -1,0 +1,29 @@
+name: Daily news ingestion
+
+on:
+  schedule:
+    # 05:00 UTC daily — matches the schedule in vercel.json (informational
+    # only on the Hobby plan, which doesn't run Vercel Cron automatically).
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call ingestion endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          set -euo pipefail
+          url="${SITE_URL:-https://ai-newssync.vercel.app}/api/cron/fetch-news"
+          echo "Calling $url"
+          status=$(curl -sS -o response.json -w "%{http_code}" --max-time 280 \
+            -H "Authorization: Bearer ${CRON_SECRET}" "$url")
+          echo "HTTP status: $status"
+          cat response.json
+          if [ "$status" -ne 200 ]; then
+            echo "::error::Ingestion endpoint returned $status"
+            exit 1
+          fi
